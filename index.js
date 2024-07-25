@@ -24,7 +24,7 @@ app.get('/', async (req, res) => {
         await value.save();
         res.send(`hello node app is running and initial value is set to ${initialValue}`);
       } else {
-        res.send(`hello node app is running and value is ${value.value}`);
+        res.send(` ${value.value}`);
       }
     } catch (error) {
       res.status(500).send('Internal server error');
