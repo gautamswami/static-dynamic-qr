@@ -1,12 +1,14 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
 const Value = require('./models/value');
 
 const app = express();
 app.use(express.json());
+app.use(cors({ origin: 'http://localhost:3000' }));
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3010;
 const mongoUri = process.env.MONGO_URI;
 
 mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -66,10 +68,10 @@ app.put('/value/:key', async (req, res) => {
     res.status(500).send('Internal server error');
   }
 });
-app.get('/update/:key', async (req, res) => {
+app.post('/update/:key', async (req, res) => {
     const key = req.params.key;
-    const newValue = req.query.value;
-  
+    const newValue = req.body.value;
+    console.log(newValue);
     if (!newValue) {
       return res.status(400).send('Value query parameter is required');
     }
@@ -89,6 +91,17 @@ app.get('/update/:key', async (req, res) => {
       res.status(500).send('Internal server error');
     }
   });
+
+  app.get('/values', async (req, res) => {
+    try {
+      const values = await Value.find();
+      res.json(values);
+    } catch (error) {
+      res.status(500).send('Internal server error');
+    }
+  });
+  
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
